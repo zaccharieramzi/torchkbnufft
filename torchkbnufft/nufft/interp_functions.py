@@ -139,8 +139,12 @@ def calc_coef_and_indices(tm, kofflist, Jval, table, centers, L, dims, conjcoef=
                 table[d][:, distind[d, :] + centers[d]],
                 dim=0
             )
-        arr_ind = arr_ind + torch.remainder(gridind[d, :], dims[d]).view(-1) * \
-            torch.prod(dims[d + 1:])
+        remainder = torch.where(
+            gridind[d, :] < 0,
+            gridind[d, :] + dims[d],
+            gridind[d, :],
+        )
+        arr_ind = arr_ind + remainder.view(-1) * torch.prod(dims[d + 1:])
 
     return coef, arr_ind
 
